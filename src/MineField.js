@@ -9,7 +9,8 @@ export default class MineField extends Component {
       level: 'easy',
       numOfMines: 0,
       field: [],
-      remainingSquares: 0
+      remainingSquares: 0,
+      remainingMines: 0
     }
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -75,12 +76,13 @@ export default class MineField extends Component {
     let fieldSize = fieldWidth * fieldWidth;
     let level = this.state.level;
     let numOfMines = this.createLevel(level, fieldSize);
+    let remainingMines = numOfMines;
     let remainingSquares = fieldSize - numOfMines;
     let field = this.makeEmptyField(fieldWidth);
     let mines = this.makeMines(numOfMines, fieldWidth, fieldSize);
     field = this.placeMines(field, mines);
     field = this.addNearbyMineCounts(field, mines);
-    this.setState({field, numOfMines, remainingSquares})
+    this.setState({field, numOfMines, remainingSquares, remainingMines})
   }
   makeEmptyField = function (fieldWidth) {
     var field = new Array(fieldWidth);
@@ -135,16 +137,15 @@ export default class MineField extends Component {
     if (sq.mine){
       sq.display = 'mine';
       this.revealAll();
-      console.log('game over', sq)
+      alert('You lose. Play again?')
     }else{
       let remaining = this.state.remainingSquares;
       remaining--;
       this.setState({remainingSquares: remaining});
     }
-    if (this.state.remainingSquares <= 1){
-      console.log(this.state.remainingSquares, 'you win!')
+    if (this.state.remainingMines === 0 && this.state.remainingSquares <= 1){
+      alert('You win! Play again?')
     }
-    console.log('SQUARE', sq)
     return;
   }
   // called when mine is clicked and game is over, changes display property on all squares to 'revealed'
@@ -156,15 +157,15 @@ export default class MineField extends Component {
         sq.display = 'revealed'
       }
     }
-    console.log('field in revealAll', field)
     this.setState({field})
   }
 
   squareFlagged = function (event, sq){
     event.preventDefault()
     sq.display = 'flagged';
-    console.log('SQUARE', sq)
-    return;
+    let remainingMines = this.state.remainingMines;
+    remainingMines--;
+    this.setState({remainingMines})
   }
 
   render() {
@@ -189,6 +190,10 @@ export default class MineField extends Component {
             </label>
             <input type="submit" value="Submit" />
           </form>
+        </div>
+
+        <div>
+          <p>Mines: {this.state.remainingMines} </p>
         </div>
 
         <div className="mine-field-container">
