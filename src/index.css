@@ -4,10 +4,29 @@ body {
   font-family: sans-serif;
 }
 table {
-  border: .01em solid black;
+  border: 1px solid rgb(23, 23, 24);
   margin: auto;
 }
-td {
-  border: .01em solid black;
-  padding: .5em;
+button {
+  width: 30px;
+  height: 30px;
+}
+.start-game {
+  background-color: red;
+  width: auto;
+}
+.hidden {
+  visibility: collapse;
+}
+.revealed {
+  background-color: lightgrey;
+}
+.square {
+  border: 1px solid grey;
+}
+.flagged {
+  background-color: black;
+}
+.mine {
+  background-color: red;
 }

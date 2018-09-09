@@ -5,11 +5,15 @@ export default class MineField extends Component {
   constructor(props){
     super(props);
     this.state = {
-      fieldWidth: 4,
-      numOfMines: 3,
+      fieldWidth: 10,
+      level: 'easy',
+      numOfMines: 0,
       field: [],
-      remainingSquares: 9
+      remainingSquares: 0
     }
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.createLevel = this.createLevel.bind(this);
     this.makeMines= this.makeMines.bind(this);
     this.selectMines= this.selectMines.bind(this);
     this.makeField = this.makeField.bind(this);
@@ -18,16 +22,30 @@ export default class MineField extends Component {
     this.addNearbyMineCounts = this.addNearbyMineCounts.bind(this);
     this.squareExists = this.squareExists.bind(this);
     this.incrementCount = this.incrementCount.bind(this);
-  }
-// later, this.makeField() will be call onClick 'GO' ONLY
-  componentWillMount () {
-    this.makeField();
+    this.revealAll = this.revealAll.bind(this);
   }
 
-  makeMines = function (){
-    let numOfMines = this.state.numOfMines;
-    let fieldWidth = this.state.fieldWidth;
-    let fieldSize = fieldWidth * fieldWidth;
+  handleChange(event) {
+    this.setState({ [event.target.name]: event.target.value });
+  }
+  handleSubmit(event) {
+    event.preventDefault();
+    this.makeField()
+  }
+
+  createLevel = function(level, fieldSize){
+    let numOfMines;
+    if (level === 'easy'){
+      numOfMines = Math.floor(.1 * fieldSize)
+    }else if (level === 'medium'){
+      numOfMines = Math.floor(.25 * fieldSize)
+    }else if (level === 'hard'){
+      numOfMines = Math.floor(.4 * fieldSize)
+    }
+    return numOfMines;
+  }
+
+  makeMines = function (numOfMines, fieldWidth, fieldSize){
     let mines = this.selectMines(fieldSize, numOfMines);
     mines = this.convertTo2D(mines, fieldWidth);
     return mines;
@@ -54,18 +72,22 @@ export default class MineField extends Component {
 
   makeField = function (){
     let fieldWidth = this.state.fieldWidth;
+    let fieldSize = fieldWidth * fieldWidth;
+    let level = this.state.level;
+    let numOfMines = this.createLevel(level, fieldSize);
+    let remainingSquares = fieldSize - numOfMines;
     let field = this.makeEmptyField(fieldWidth);
-    let mines = this.makeMines();
+    let mines = this.makeMines(numOfMines, fieldWidth, fieldSize);
     field = this.placeMines(field, mines);
     field = this.addNearbyMineCounts(field, mines);
-    this.setState({field})
+    this.setState({field, numOfMines, remainingSquares})
   }
   makeEmptyField = function (fieldWidth) {
     var field = new Array(fieldWidth);
     for (let i = 0; i < fieldWidth; i++) {
       field[i] = new Array(fieldWidth);
       for (let k = 0; k < fieldWidth; k++){
-        field[i][k] = {mine: false, count: 0};
+        field[i][k] = {mine: false, count: 0, display: 'hidden'};
       }
     }
     return field;
@@ -108,25 +130,89 @@ export default class MineField extends Component {
     return updatedSquare;
   }
 
+  squareClicked = function (event, sq){
+    sq.display = 'revealed';
+    if (sq.mine){
+      sq.display = 'mine';
+      this.revealAll();
+      console.log('game over', sq)
+    }else{
+      let remaining = this.state.remainingSquares;
+      remaining--;
+      this.setState({remainingSquares: remaining});
+    }
+    if (this.state.remainingSquares <= 1){
+      console.log(this.state.remainingSquares, 'you win!')
+    }
+    console.log('SQUARE', sq)
+    return;
+  }
+  // called when mine is clicked and game is over, changes display property on all squares to 'revealed'
+  revealAll = function (){
+    let field = this.state.field;
+    for (let row = 0; row < field.length; row++){
+      for (let col = 0; col < field.length; col++){
+        let sq = field[row][col];
+        sq.display = 'revealed'
+      }
+    }
+    console.log('field in revealAll', field)
+    this.setState({field})
+  }
+
+  squareFlagged = function (event, sq){
+    event.preventDefault()
+    sq.display = 'flagged';
+    console.log('SQUARE', sq)
+    return;
+  }
+
   render() {
     let field = this.state.field;
+    console.log('STATE', this.state)
     return (
-      <div className="mine-field-container">
-        <table>
-          <tbody>
-            {
-              field.map((row, i) =>
-                <tr key={i}>
-                {
-                  row.map((sq, i) =>
-                    <td key={i}>{sq.mine ? 'X' : sq.count}</td>
-                  )
-                }
-                </tr>
-              )
-            }
-          </tbody>
-        </table>
+      <div>
+
+        <div className="options">
+          <form onSubmit={this.handleSubmit}>
+            <label>
+              Minefield Width:
+              <input type="number" name="fieldWidth" defaultValue={this.state.fieldWidth} onChange={this.handleChange} />
+            </label>
+            <label>
+              Level:
+              <select name="level" value={this.state.level} onChange={this.handleChange}>
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+              </select>
+            </label>
+            <input type="submit" value="Submit" />
+          </form>
+        </div>
+
+        <div className="mine-field-container">
+          <table>
+            <tbody>
+              {
+                field.map((row, i) =>
+                  <tr key={i}>
+                  {
+                    row.map((sq, i) =>
+                      <td key={i} className="square"
+                      onClick={ (event) => this.squareClicked(event, sq)}
+                      onContextMenu={(event) => this.squareFlagged(event, sq)}>
+                      <button className={sq.display}> {sq.mine ? 'X' : sq.count} </button>
+                      </td>
+                    )
+                  }
+                  </tr>
+                )
+              }
+            </tbody>
+          </table>
+        </div>
+
       </div>
     );
   }
