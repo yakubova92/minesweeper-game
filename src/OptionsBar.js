@@ -9,17 +9,13 @@ export default class OptionsBar extends Component {
   }
 
   handleChange = function (event){
-    console.log('hi from the OptionsBar handleChange func')
-    console.log('this.props', this.props)
     this.props.handleChange(event)
-    console.log('field info EVENT', event);
   }
   handleSubmit = function (event){
     this.props.handleSubmit(event);
   }
 
   render (){
-    console.log('PROPS in OptionsBar', this.props)
     return (
       <div className="options">
       <form onSubmit={this.handleSubmit}>

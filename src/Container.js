@@ -28,8 +28,6 @@ export default class Container extends Component {
   }
 
   handleFieldInfoChange(event) {
-    console.log('hi from the Container handleFieldInfoChange func')
-    console.log('event.target.name', event.target.name)
     this.setState({ [event.target.name]: event.target.value });
   }
   handleSubmit(event) {
@@ -177,23 +175,6 @@ export default class Container extends Component {
     return (
       <div>
         <OptionsBar handleChange={this.handleFieldInfoChange} handleSubmit={this.handleSubmit} fieldInfo={this.state}/>
-        {/* <div className="options">
-          <form onSubmit={this.handleSubmit}>
-            <label>
-              Minefield Width:
-              <input type="number" name="fieldWidth" defaultValue={this.state.fieldWidth} onChange={this.handleChange} />
-            </label>
-            <label>
-              Level:
-              <select name="level" value={this.state.level} onChange={this.handleChange}>
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="hard">Hard</option>
-              </select>
-            </label>
-            <input type="submit" value="Submit" />
-          </form>
-        </div> */}
 
         <div>
           <p>Mines: {this.state.remainingMines} </p>
