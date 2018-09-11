@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
+import OptionsBar from './OptionsBar';
 import './App.css';
 
-export default class MineField extends Component {
+export default class Container extends Component {
   constructor(props){
     super(props);
     this.state = {
@@ -12,7 +13,7 @@ export default class MineField extends Component {
       remainingSquares: 0,
       remainingMines: 0
     }
-    this.handleChange = this.handleChange.bind(this);
+    this.handleFieldInfoChange = this.handleFieldInfoChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.createLevel = this.createLevel.bind(this);
     this.makeMines= this.makeMines.bind(this);
@@ -26,7 +27,9 @@ export default class MineField extends Component {
     this.revealAll = this.revealAll.bind(this);
   }
 
-  handleChange(event) {
+  handleFieldInfoChange(event) {
+    console.log('hi from the Container handleFieldInfoChange func')
+    console.log('event.target.name', event.target.name)
     this.setState({ [event.target.name]: event.target.value });
   }
   handleSubmit(event) {
@@ -173,8 +176,8 @@ export default class MineField extends Component {
     console.log('STATE', this.state)
     return (
       <div>
-
-        <div className="options">
+        <OptionsBar handleChange={this.handleFieldInfoChange} handleSubmit={this.handleSubmit} fieldInfo={this.state}/>
+        {/* <div className="options">
           <form onSubmit={this.handleSubmit}>
             <label>
               Minefield Width:
@@ -190,7 +193,7 @@ export default class MineField extends Component {
             </label>
             <input type="submit" value="Submit" />
           </form>
-        </div>
+        </div> */}
 
         <div>
           <p>Mines: {this.state.remainingMines} </p>
