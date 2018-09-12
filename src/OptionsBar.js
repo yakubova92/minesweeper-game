@@ -8,9 +8,12 @@ export default class OptionsBar extends Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  // updates state when fieldWidth or level are changed
   handleChange = function (event){
     this.props.handleChange(event)
   }
+
+  // starts the game
   handleSubmit = function (event){
     this.props.handleSubmit(event);
   }

@@ -6,9 +6,9 @@ export default class MineField extends Component {
     super(props);
     this.handleClick = this.handleClick.bind(this);
     this.handleRightClick = this.handleRightClick.bind(this);
-    //this.revealAll = this.revealAll.bind(this);
   }
 
+  // fires when user left-clicks a square. If square is a mine, game is over. If not a mine, counts towards a win is updated and square is revealed. If last square is clicked and user wins, alert.
   handleClick = function (event, sq){
     sq.display = 'revealed';
     if (sq.mine){
@@ -25,6 +25,8 @@ export default class MineField extends Component {
     }
     return;
   }
+
+  // fires when a user right-clicks a square. Square is flagged and counts towards a win is updated.
   handleRightClick = function (event, sq){
     event.preventDefault()
     sq.display = 'flagged';
@@ -32,16 +34,6 @@ export default class MineField extends Component {
     remainingMines--;
     this.props.handleRightClick(remainingMines);
   }
-  // revealAll = function (){
-  //   let field = this.props.fieldInfo.field;
-  //   for (let row = 0; row < field.length; row++){
-  //     for (let col = 0; col < field.length; col++){
-  //       let sq = field[row][col];
-  //       sq.display = 'revealed'
-  //     }
-  //   }
-  //   this.setState({field})
-  // }
 
   render (){
     let field = this.props.fieldInfo.field
