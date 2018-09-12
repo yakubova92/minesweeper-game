@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import OptionsBar from './OptionsBar';
+import MineField from './MineField';
 import './App.css';
 
 export default class Container extends Component {
@@ -24,6 +25,8 @@ export default class Container extends Component {
     this.addNearbyMineCounts = this.addNearbyMineCounts.bind(this);
     this.squareExists = this.squareExists.bind(this);
     this.incrementCount = this.incrementCount.bind(this);
+    this.squareFlagged = this.squareFlagged.bind(this);
+    this.squareClicked = this.squareClicked.bind(this);
     this.revealAll = this.revealAll.bind(this);
   }
 
@@ -133,22 +136,10 @@ export default class Container extends Component {
     return updatedSquare;
   }
 
-  squareClicked = function (event, sq){
-    sq.display = 'revealed';
-    if (sq.mine){
-      sq.display = 'mine';
-      this.revealAll();
-      alert('You lose. Play again?')
-    }else{
-      let remaining = this.state.remainingSquares;
-      remaining--;
-      this.setState({remainingSquares: remaining});
-    }
-    if (this.state.remainingMines === 0 && this.state.remainingSquares <= 1){
-      alert('You win! Play again?')
-    }
-    return;
+  squareClicked = function (remainingSquares){
+    this.setState({remainingSquares})
   }
+
   // called when mine is clicked and game is over, changes display property on all squares to 'revealed'
   revealAll = function (){
     let field = this.state.field;
@@ -161,26 +152,23 @@ export default class Container extends Component {
     this.setState({field})
   }
 
-  squareFlagged = function (event, sq){
-    event.preventDefault()
-    sq.display = 'flagged';
-    let remainingMines = this.state.remainingMines;
-    remainingMines--;
+  squareFlagged = function (remainingMines){
     this.setState({remainingMines})
   }
 
   render() {
-    let field = this.state.field;
     console.log('STATE', this.state)
     return (
       <div>
-        <OptionsBar handleChange={this.handleFieldInfoChange} handleSubmit={this.handleSubmit} fieldInfo={this.state}/>
+        <OptionsBar fieldInfo={this.state} handleChange={this.handleFieldInfoChange} handleSubmit={this.handleSubmit} />
 
         <div>
           <p>Mines: {this.state.remainingMines} </p>
         </div>
 
-        <div className="mine-field-container">
+        <MineField fieldInfo={this.state} handleClick={this.squareClicked} handleRightClick={this.squareFlagged} revealAll={this.revealAll}/>
+
+        {/* <div className="mine-field-container">
           <table>
             <tbody>
               {
@@ -200,7 +188,7 @@ export default class Container extends Component {
               }
             </tbody>
           </table>
-        </div>
+        </div> */}
 
       </div>
     );
