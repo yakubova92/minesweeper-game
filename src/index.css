@@ -11,9 +11,9 @@ button {
   width: 30px;
   height: 30px;
 }
-.start-game {
-  background-color: red;
-  width: auto;
+label {
+  padding: 10px;
+  display: inline-block;
 }
 .hidden {
   visibility: collapse;
