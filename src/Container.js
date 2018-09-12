@@ -16,6 +16,8 @@ export default class Container extends Component {
     }
     this.addNearbyMineCounts = this.addNearbyMineCounts.bind(this);
     this.createLevel = this.createLevel.bind(this);
+    this.findZeros = this.findZeros.bind(this);
+    this.findSurrounding = this.findSurrounding.bind(this);
     this.handleFieldInfoChange = this.handleFieldInfoChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.incrementCount = this.incrementCount.bind(this);
@@ -73,6 +75,47 @@ export default class Container extends Component {
       numOfMines = Math.floor(.4 * fieldSize)
     }
     return numOfMines;
+  }
+
+  findZeros = function(minefield, zeroSqs){
+    console.log('tryina find them zeros')
+    zeroSqs = [zeroSqs]
+    console.log('zero coord', zeroSqs)
+    do {
+      zeroSqs = this.findSurrounding(minefield, zeroSqs)
+      console.log('zeroSqs in findZeros func')
+    } while (zeroSqs.length > 0)
+  }
+  findSurrounding = function (field, zeroSqs){
+    let surroundingZeros = [];
+    console.log('ZEROS', surroundingZeros)
+    console.log('array of zeros in argument', zeroSqs)
+    for (let idx = 0; idx < zeroSqs.length; idx++){
+      let zeroSqRow = zeroSqs[idx][0];
+      let zeroSqCol = zeroSqs[idx][1];
+
+      let shiftRowBy = [-1, -1, -1, 0, 0, 1, 1, 1];
+      let shiftColBy = [-1, 0, 1, -1, 1, -1, 0, 1];
+
+      for (let sIdx = 0; sIdx < shiftRowBy.length; sIdx++){
+        let nearbySqRow = zeroSqRow + shiftRowBy[sIdx];
+        let nearbySqCol = zeroSqCol + shiftColBy[sIdx];
+        if (this.squareExists(nearbySqRow, nearbySqCol, field)){
+          let sq = field[nearbySqRow][nearbySqCol];
+          if (sq.count === 0 && sq.display !== 'revealed' ){
+            // if count is zero, do recursion
+            surroundingZeros.push([nearbySqRow, nearbySqCol])
+          }
+          if (!sq.mine && sq.display !== 'revealed') {
+            sq.display = 'revealed';
+            console.log('revealed', [nearbySqRow, nearbySqCol])
+          }
+
+        }
+      }
+    }
+    console.log('SurroundingZeros', surroundingZeros)
+    return surroundingZeros
   }
 
   // updates state based on user input (width of minefield, level)
@@ -188,7 +231,7 @@ export default class Container extends Component {
           <p>Mines: {this.state.remainingMines} </p>
         </div>
 
-        <MineField fieldInfo={this.state} handleClick={this.squareClicked} handleRightClick={this.squareFlagged} revealAll={this.revealAll}/>
+        <MineField fieldInfo={this.state} handleClick={this.squareClicked} handleRightClick={this.squareFlagged} revealAll={this.revealAll} findZeros={this.findZeros}/>
 
       </div>
     );

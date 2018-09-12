@@ -9,7 +9,10 @@ export default class MineField extends Component {
   }
 
   // fires when user left-clicks a square. If square is a mine, game is over. If not a mine, counts towards a win is updated and square is revealed. If last square is clicked and user wins, alert.
-  handleClick = function (event, sq){
+  handleClick = function (event, sq, row, col){
+    console.log('sq argument on handleClick', sq)
+    console.log('row argument on handleClick', row)
+    console.log('i argument on handleClick', col)
     if (sq.display === 'revealed') return;
     if (sq.display === 'flagged'){
       let remainingMines = this.props.fieldInfo.remainingMines;
@@ -28,13 +31,22 @@ export default class MineField extends Component {
       this.props.handleClick(remaining);
     }
     if (sq.count === 0){
+      let minefield = this.props.fieldInfo.field
+      let sqCoord = [row, col]
       console.log('you found a zero square and youre gonna clear a whole section!');
+      this.props.findZeros(minefield, sqCoord)
     }
     if (this.props.fieldInfo.remainingMines === 0 && this.props.fieldInfo.remainingSquares <= 1){
       alert('You win! Play again?')
     }
     return;
   }
+
+  // findZeros = function (minefield, zeroSqs){
+  //   do {
+  //     zeroSqs = findSurrounding(minefield, zeroSqs)
+  //   } while (zeroSqs.length > 0)
+  // }
 
   // fires when a user right-clicks a square. Square is flagged and counts towards a win is updated.
   handleRightClick = function (event, sq){
@@ -47,18 +59,19 @@ export default class MineField extends Component {
   }
 
   render (){
+    console.log('minefield props', this.props)
     let field = this.props.fieldInfo.field
     return (
       <div className="mine-field-container">
         <table>
           <tbody>
             {
-              field.map((row, i) =>
-                <tr key={i}>
+              field.map((row, r) =>
+                <tr key={r}>
                 {
-                  row.map((sq, i) =>
-                    <td key={i} className="square"
-                    onClick={ (event) => this.handleClick(event, sq)}
+                  row.map((sq, c) =>
+                    <td key={c} className="square"
+                    onClick={ (event) => this.handleClick(event, sq, r, c)}
                     onContextMenu={(event) => this.handleRightClick(event, sq)}>
                     <button className={sq.display}> {sq.mine ? 'X' : sq.count} </button>
                     </td>
