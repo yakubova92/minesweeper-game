@@ -11,6 +11,12 @@ export default class MineField extends Component {
   // fires when user left-clicks a square. If square is a mine, game is over. If not a mine, counts towards a win is updated and square is revealed. If last square is clicked and user wins, alert.
   handleClick = function (event, sq){
     if (sq.display === 'revealed') return;
+    if (sq.display === 'flagged'){
+      let remainingMines = this.props.fieldInfo.remainingMines;
+      remainingMines += 1;
+      console.log('remaining mines', remainingMines)
+      this.props.handleRightClick(remainingMines);
+    }
     sq.display = 'revealed';
     if (sq.mine){
       sq.display = 'mine';
