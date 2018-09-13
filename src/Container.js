@@ -78,18 +78,13 @@ export default class Container extends Component {
   }
 
   findZeros = function(minefield, zeroSqs){
-    console.log('tryina find them zeros')
     zeroSqs = [zeroSqs]
-    console.log('zero coord', zeroSqs)
     do {
       zeroSqs = this.findSurrounding(minefield, zeroSqs)
-      console.log('zeroSqs in findZeros func')
     } while (zeroSqs.length > 0)
   }
   findSurrounding = function (field, zeroSqs){
     let surroundingZeros = [];
-    console.log('ZEROS', surroundingZeros)
-    console.log('array of zeros in argument', zeroSqs)
     for (let idx = 0; idx < zeroSqs.length; idx++){
       let zeroSqRow = zeroSqs[idx][0];
       let zeroSqCol = zeroSqs[idx][1];
@@ -108,13 +103,11 @@ export default class Container extends Component {
           }
           if (!sq.mine && sq.display !== 'revealed') {
             sq.display = 'revealed';
-            console.log('revealed', [nearbySqRow, nearbySqCol])
           }
 
         }
       }
     }
-    console.log('SurroundingZeros', surroundingZeros)
     return surroundingZeros
   }
 
@@ -222,7 +215,6 @@ export default class Container extends Component {
   }
 
   render() {
-    console.log('STATE', this.state)
     return (
       <div>
         <OptionsBar fieldInfo={this.state} handleChange={this.handleFieldInfoChange} handleSubmit={this.handleSubmit} />

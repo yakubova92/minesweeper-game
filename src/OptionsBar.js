@@ -19,17 +19,18 @@ export default class OptionsBar extends Component {
   }
 
   render (){
+    let fieldInfo = this.props.fieldInfo
     return (
       <div className="options">
         <form onSubmit={this.handleSubmit}>
           <label>
             Minefield Width:
-            <input type="number" name="fieldWidth" defaultValue={this.props.fieldInfo.fieldWidth} onChange={this.handleChange} />
+            <input type="number" name="fieldWidth" defaultValue={fieldInfo.fieldWidth} onChange={this.handleChange} />
           </label>
           <br />
           <label>
             Level:
-            <select name="level" value={this.props.fieldInfo.level} onChange={this.handleChange}>
+            <select name="level" value={fieldInfo.level} onChange={this.handleChange}>
               <option value="easy">Easy</option>
               <option value="medium">Medium</option>
               <option value="hard">Hard</option>
