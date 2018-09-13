@@ -1,38 +1,44 @@
-// import React, { Component } from 'react';
-// import './App.css';
+import React, { Component } from 'react';
+import './App.css';
 
-// export default class OptionsBar extends Component {
-//   constructor(props){
-//     super(props);
-//     this.state = {
-//       fieldWidth: 0,
-//       numOfMines: 0,
-//       field: [],
-//       remainingSquares: 0
-//     }
-//     this.setFieldInfo = this.setFieldInfo.bind(this);
-//   }
-// // later, this.makeField() will be call onClick 'GO' ONLY
-//   // componentWillMount () {
-//   // }
+export default class OptionsBar extends Component {
+  constructor(props){
+    super(props);
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
 
-//   setFieldInfo = function (event){
-//     console.log('field info EVENT', event);
-//   }
+  // updates state when fieldWidth or level are changed
+  handleChange = function (event){
+    this.props.handleChange(event)
+  }
 
-//   render (){
-//     return (
-//       <div>
-//         <form className="fieldInfo" onSubmit={event => this.setFieldInfo(event)}>
-//           <input type="number" name="boardWidth" defaultValue="10"/>
-//           <div>
-//             <input type="radio" name="level" value="easy"/> Easy
-//             <input type="radio" name="level" value="medium"/> Medium
-//             <input type="radio" name="level" value="hard"/> Hard
-//           </div>
-//           <button type="submit">Submit</button>
-//         </form>
-//       </div>
-//     )
-//   }
-// }
+  // starts the game
+  handleSubmit = function (event){
+    this.props.handleSubmit(event);
+  }
+
+  render (){
+    let fieldInfo = this.props.fieldInfo
+    return (
+      <div className="options">
+        <form onSubmit={this.handleSubmit}>
+          <label>
+            Minefield Width:
+            <input type="number" name="fieldWidth" defaultValue={fieldInfo.fieldWidth} onChange={this.handleChange} />
+          </label>
+          <br />
+          <label>
+            Level:
+            <select name="level" value={fieldInfo.level} onChange={this.handleChange}>
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </label>
+          <input type="submit" value="START" />
+        </form>
+      </div>
+    )
+  }
+}
